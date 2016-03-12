@@ -6,10 +6,13 @@
 #include "fontinfo.h"
 #include "shapes.h"
 
-int main() {
-	int width, height;
-	init(&width, &height);
+int width, height;
 
+void initDisplay(){
+	init(&width, &height);
+}
+
+void rect() {
 	Fill(255, 255, 255, 1);
 	int i;
 	for(i=0;i<3;i++){
@@ -23,7 +26,8 @@ int main() {
 		End();
 		sleep(1);
 	}
-	finish();
-	exit(0);
 }
 
+void endDisplay(){
+	finish();
+}
