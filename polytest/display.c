@@ -14,10 +14,82 @@ static int width, height;
 static PyObject *display_init(PyObject *self, PyObject *args){ //do this properly
 //	int width, height;
 	init(&width, &height);
+	Start(width,height);
   Py_RETURN_NONE;
 }
 
+static PyObject *display_expose(PyObject *self, PyObject *args){
+	Start(width,height); //start composing the image
+	Background(0,0,0); //background is black
 
+	PyObject *contours; //this holds all the contours in the layer.
+	int count; //this is the amount of contours.
+
+	//get the contours tuple from arguments.
+	if (!PyArg_ParseTuple(args,"i0",&count,&contours)){
+		return NULL;
+	}
+	//now you have a tuple of contours.
+	int i;//iterating variable
+	for (i=0;i<=count;i++){
+			PyObject *contour;
+			//Get the proper contour
+			contour = PyTuple_GetItem(contours,i);
+			int color; //holds the color of the contour
+			double csize; //holds the number of points
+			PyObject *Xlist; //holds the x coordinates of the points
+			PyObject *Ylist; //holds the y coordinates of the points
+
+			//Extract size, color and coordinates of the contour.
+			if(!PyArg_ParseTuple(contour,"ii00",&csize,&color,&Xtuple,&Ytuple){
+				return NULL;
+			}
+
+			//Turn the tuples into c arrays
+			xpoints = (double *) malloc(sizeof(double)*csize);
+			ypoints = (double *) malloc(sizeof(double)*csize);
+
+			long j;//iterating variable
+			for(j = 0;j<size;j++){
+				PyObject *xpoint;
+				PyObject *ypoint;
+				xpoint = PyList_GetItem(Xlist,j);
+				ypoint = PyList_GetItem(Ylist,j);
+				if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
+         free(xpoints);
+         free(ypoints);
+         PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
+         return NULL;
+      	}
+
+				//put the point into the array.
+				xpoints[j] = PyFloat_AsDouble(xpoint);
+				ypoints[j] = PyFloat_AsDouble(ypoint);
+			}
+
+			//construct the image
+ 			if(color == 1){
+				Fill(255,255,255,1);
+			}
+			else{
+				Fill(0,0,0,1);
+			}
+			Polygon(xpoints,ypoints,sizeof(xpoints));
+
+			//dispose the memory for xpoints and ypoints maybe??
+			free(xpoints);
+			free(ypoints);
+		} //All contours loaded
+	}
+
+	End(); //End composing the image and show.
+}
+
+static PyObject *display_blank(PyObject *self, PyObject *args){
+	Start(width,height);
+	Background(0,0,0);
+	End();
+}
 
 static PyObject *display_polyline(PyObject *self, PyObject *args) {
 
