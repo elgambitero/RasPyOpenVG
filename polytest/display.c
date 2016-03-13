@@ -29,7 +29,9 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 	if (!PyArg_ParseTuple(args,"i0",&count,&contours)){
 		return NULL;
 	}
+
 	//now you have a tuple of contours.
+	//Let's draw them all
 	int i;//iterating variable
 	for (i=0;i<=count;i++){
 			PyObject *contour;
@@ -58,31 +60,31 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 				xpoint = PyList_GetItem(Xlist,j);
 				ypoint = PyList_GetItem(Ylist,j);
 				if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
-         				free(xpoints);
-         				free(ypoints);
-         				PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
-         				return NULL;
-      				}
-
-				//put the point into the array.
-				xpoints[j] = PyFloat_AsDouble(xpoint);
-				ypoints[j] = PyFloat_AsDouble(ypoint);
+         		free(xpoints);
+         		free(ypoints);
+         		PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
+         	 return NULL;
+      	}
 			}
+			//put the point into the array.
+			xpoints[j] = PyFloat_AsDouble(xpoint);
+			ypoints[j] = PyFloat_AsDouble(ypoint);
+		}
 
-			//construct the image
- 			if(color == 1){
-				Fill(255,255,255,1);
-			}
-			else{
-				Fill(0,0,0,1);
-			}
-			Polygon((float*)xpoints,(float*)ypoints,csize);
+		//construct the image
+ 		if(color == 1){
+			Fill(255,255,255,1);
+		}
+		else{
+			Fill(0,0,0,1);
+		}
+		Polygon((float*)xpoints,(float*)ypoints,csize);
 
-			//dispose the memory for xpoints and ypoints maybe??
-			free(xpoints);
-			free(ypoints);
-		} //All contours loaded
+		//dispose the memory for xpoints and ypoints maybe??
+		free(xpoints);
+		free(ypoints);
 	}
+	//All contours loaded
 
 	End(); //End composing the image and show.
 	Py_RETURN_NONE;
