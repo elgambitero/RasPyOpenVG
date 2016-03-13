@@ -42,4 +42,9 @@ static PyMethodDef rect_methods[] = {
   //{"initDisplay", (PyCFunction)rect_initDisplay, METH_NOARGS, NULL},
   {"rect", (PyCFunction)rect_rect, METH_NOARGS, NULL},
   //{"endDisplay", (PyCFunction)rect_endDisplay, METH_NOARGS, NULL},
+};
+
+DL_EXPORT(void) initrect(void)
+{
+	Py_InitModule("rect",rect_methods);
 }
