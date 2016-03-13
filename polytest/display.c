@@ -43,7 +43,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 	//now you have a tuple of contours.
 	//Let's draw them all
 	int i;//iterating variable
-	for (i=0;i<=count;i++){
+	for (i=0;i<count;i++){
 		PyObject *contour;
 //Get the proper contour
 		contour = PyTuple_GetItem(contours,i);
@@ -53,7 +53,8 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		PyObject *Ylist; //holds the y coordinates of the points
 		double *xpoints; //C array that holds the x coordinates
 		double *ypoints; //C array that holds the y coordinates
-
+		
+		PyRun_SimpleString("print('contour loaded')");
 		//Extract size, color and coordinates of the contour.
 		csize = PyInt_AsLong(PyTuple_GetItem(contour,0));
 		color = PyInt_AsLong(PyTuple_GetItem(contour,1));
