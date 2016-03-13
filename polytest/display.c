@@ -21,13 +21,25 @@ static PyObject *display_init(PyObject *self, PyObject *args){ //do this properl
 static PyObject *display_expose(PyObject *self, PyObject *args){
 	Start(width,height); //start composing the image
 	Background(0,0,0); //background is black
-
-	PyObject *contours; //this holds all the contours in the layer.
-	int count; //this is the amount of contours.
-//get the contours tuple from arguments.
-	if (!PyArg_ParseTuple(args,"i0",&count,&contours)){
+	PyObject *layer;
+	if(!PyArg_ParseTuple(args,"O",&layer)){
 		return NULL;
 	}
+	
+	PyObject *PyCount;
+	PyObject *contours; //this holds all the contours in the layer.
+	long count; //this is the amount of contours.
+	//get the contours tuple from arguments.
+	PyCount = PyTuple_GetItem(layer,0);
+	if(PyCount == NULL){
+		PyErr_SetString(PyExc_TypeError,"The count is wrong");
+		return NULL;
+	}
+	count = PyInt_AsLong(PyCount);
+	contours = PyTuple_GetItem(layer,1);
+//	if (!PyArg_ParseTuple(layer,"iO",&count,&contours)){
+//		return NULL;
+//	}
 	//now you have a tuple of contours.
 	//Let's draw them all
 	int i;//iterating variable
@@ -35,7 +47,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		PyObject *contour;
 //Get the proper contour
 		contour = PyTuple_GetItem(contours,i);
-		int color; //holds the color of the contour
+		long color; //holds the color of the contour
 		long csize; //holds the number of points
 		PyObject *Xlist; //holds the x coordinates of the points
 		PyObject *Ylist; //holds the y coordinates of the points
@@ -43,9 +55,13 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		double *ypoints; //C array that holds the y coordinates
 
 		//Extract size, color and coordinates of the contour.
-		if(!PyArg_ParseTuple(contour,"ii00",&csize,&color,&Xlist,&Ylist)){
-			return NULL;
-		}
+		csize = PyInt_AsLong(PyTuple_GetItem(contour,0));
+		color = PyInt_AsLong(PyTuple_GetItem(contour,1));
+		Xlist = PyTuple_GetItem(contour,2);
+		Ylist = PyTuple_GetItem(contour,3);
+//		if(!PyArg_ParseTuple(contour,"iiOO",&csize,&color,&Xlist,&Ylist)){
+//			return NULL;
+//		}
 
 		//Turn the tuples into c arrays
 		xpoints = (double *) malloc(sizeof(double)*csize);
@@ -56,11 +72,24 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			PyObject *xpoint;
 			PyObject *ypoint;
 			xpoint = PyList_GetItem(Xlist,j);
+			if(xpoint == NULL){
+				PyErr_SetString(PyExc_TypeError,"xpoint is NULL");
+				return NULL;
+			}
+			//Py_DECREF(xpoint);
 			ypoint = PyList_GetItem(Ylist,j);
+			if(ypoint == NULL){
+				PyErr_SetString(PyExc_TypeError,"ypoint is NULL");
+				return NULL;
+			}
+			//Py_DECREF(ypoint);
 			if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
 				free(xpoints);
 				free(ypoints);
 				PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
+				if(xpoint == NULL || ypoint == NULL){
+					PyErr_SetString(PyExc_TypeError, "something is null");
+				}
 				return NULL;
 			}
 			//put the point into the array.
@@ -129,8 +158,9 @@ static PyObject *display_finish(PyObject *self, PyObject *args){
 static PyMethodDef display_methods[] = {
   {"init", (PyCFunction)display_init, METH_NOARGS, NULL},
   {"polyline", (PyCFunction)display_polyline, METH_NOARGS, NULL},
-  {"expose", (PyCFuntcion)display_expose ,METH_VARARGS, NULL},
+  {"expose", (PyCFunction)display_expose ,METH_VARARGS, NULL},
   {"finish", (PyCFunction)display_finish, METH_NOARGS, NULL},
+  {"blank", (PyCFunction)display_blank, METH_NOARGS, NULL},
 };
 
 DL_EXPORT(void) initdisplay(void)
