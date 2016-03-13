@@ -36,12 +36,14 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			//Get the proper contour
 			contour = PyTuple_GetItem(contours,i);
 			int color; //holds the color of the contour
-			double csize; //holds the number of points
+			long csize; //holds the number of points
 			PyObject *Xlist; //holds the x coordinates of the points
 			PyObject *Ylist; //holds the y coordinates of the points
+			double *xpoints; //C array that holds the x coordinates
+			double *ypoints; //C array that holds the y coordinates
 
 			//Extract size, color and coordinates of the contour.
-			if(!PyArg_ParseTuple(contour,"ii00",&csize,&color,&Xtuple,&Ytuple){
+			if(!PyArg_ParseTuple(contour,"ii00",&csize,&color,&Xlist,&Ylist)){
 				return NULL;
 			}
 
@@ -50,17 +52,17 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			ypoints = (double *) malloc(sizeof(double)*csize);
 
 			long j;//iterating variable
-			for(j = 0;j<size;j++){
+			for(j = 0;j<csize;j++){
 				PyObject *xpoint;
 				PyObject *ypoint;
 				xpoint = PyList_GetItem(Xlist,j);
 				ypoint = PyList_GetItem(Ylist,j);
 				if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
-         free(xpoints);
-         free(ypoints);
-         PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
-         return NULL;
-      	}
+         				free(xpoints);
+         				free(ypoints);
+         				PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
+         				return NULL;
+      				}
 
 				//put the point into the array.
 				xpoints[j] = PyFloat_AsDouble(xpoint);
@@ -74,7 +76,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			else{
 				Fill(0,0,0,1);
 			}
-			Polygon(xpoints,ypoints,sizeof(xpoints));
+			Polygon((float*)xpoints,(float*)ypoints,csize);
 
 			//dispose the memory for xpoints and ypoints maybe??
 			free(xpoints);
@@ -83,12 +85,14 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 	}
 
 	End(); //End composing the image and show.
+	Py_RETURN_NONE;
 }
 
 static PyObject *display_blank(PyObject *self, PyObject *args){
 	Start(width,height);
 	Background(0,0,0);
 	End();
+	Py_RETURN_NONE;
 }
 
 static PyObject *display_polyline(PyObject *self, PyObject *args) {
@@ -127,6 +131,7 @@ static PyObject *display_finish(PyObject *self, PyObject *args){
 static PyMethodDef display_methods[] = {
   {"init", (PyCFunction)display_init, METH_NOARGS, NULL},
   {"polyline", (PyCFunction)display_polyline, METH_NOARGS, NULL},
+  {"expose", (PyCFuntcion)display_expose ,METH_VARARGS, NULL},
   {"finish", (PyCFunction)display_finish, METH_NOARGS, NULL},
 };
 
