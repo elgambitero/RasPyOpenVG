@@ -7,6 +7,9 @@
 #include "fontinfo.h"
 #include "shapes.h"
 
+
+static int width, height;
+
 /*
 static PyObject *display_init(PyObject *self, PyObject *args){ //do this properly
 	int width, height;
@@ -15,9 +18,10 @@ static PyObject *display_init(PyObject *self, PyObject *args){ //do this properl
 }
 */
 
+
+
 static PyObject *display_polyline(PyObject *self, PyObject *args) {
 
-	int width,height;
 	init(&width, &height);
 
 	//you want to parse this.
