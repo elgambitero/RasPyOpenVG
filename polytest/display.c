@@ -10,19 +10,18 @@
 
 static int width, height;
 
-/*
+
 static PyObject *display_init(PyObject *self, PyObject *args){ //do this properly
-	int width, height;
+//	int width, height;
 	init(&width, &height);
   Py_RETURN_NONE;
 }
-*/
 
 
 
 static PyObject *display_polyline(PyObject *self, PyObject *args) {
 
-	init(&width, &height);
+//	init(&width, &height);
 
 	//you want to parse this.
 	float xpoints[10] = {100.0,200.0,300.0,200.0,400.0,100.0,150.0,20.0,600.0,400.0};
@@ -43,21 +42,20 @@ static PyObject *display_polyline(PyObject *self, PyObject *args) {
 		sleep(1);
 	}
 
-	finish();
+//	finish();
 	Py_RETURN_NONE;
 }
 
-/*
+
 static PyObject *display_finish(PyObject *self, PyObject *args){
   finish();
   Py_RETURN_NONE;
 };
-*/
 
 static PyMethodDef display_methods[] = {
- // {"initDisplay", (PyCFunction)display_init, METH_NOARGS, NULL},
+  {"init", (PyCFunction)display_init, METH_NOARGS, NULL},
   {"polyline", (PyCFunction)display_polyline, METH_NOARGS, NULL},
- // {"endDisplay", (PyCFunction)display_finish, METH_NOARGS, NULL},
+  {"finish", (PyCFunction)display_finish, METH_NOARGS, NULL},
 };
 
 DL_EXPORT(void) initdisplay(void)
