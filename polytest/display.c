@@ -7,6 +7,7 @@
 #include "fontinfo.h"
 #include "shapes.h"
 
+#define DEBUG
 
 static int width, height;
 
@@ -25,7 +26,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 	if(!PyArg_ParseTuple(args,"O",&layer)){
 		return NULL;
 	}
-	
+
 	PyObject *PyCount;
 	PyObject *contours; //this holds all the contours in the layer.
 	long count; //this is the amount of contours.
@@ -53,13 +54,32 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		PyObject *Ylist; //holds the y coordinates of the points
 		double *xpoints; //C array that holds the x coordinates
 		double *ypoints; //C array that holds the y coordinates
-		
-		PyRun_SimpleString("print('contour loaded')");
+		#ifdef DEBUG
+			PyRun_SimpleString("print('contour loaded')");
+		#endif
 		//Extract size, color and coordinates of the contour.
 		csize = PyInt_AsLong(PyTuple_GetItem(contour,0));
+		#ifdef DEBUG
+			if(csize == 4){
+				PyRun_SimpleString("print('csize is correct')");
+			}
+		#endif
 		color = PyInt_AsLong(PyTuple_GetItem(contour,1));
+		#ifdef DEBUG
+			if(color==1){
+				PyRun_SimpleString("print('color is white')");
+			}else{
+				if(color == 0){
+					PyRun_SimpleString("print('color is black')");
+				}
+			}
+		#endif
 		Xlist = PyTuple_GetItem(contour,2);
 		Ylist = PyTuple_GetItem(contour,3);
+
+		#ifdef DEBUG
+			PyRun_SimpleString("print('contour lists loaded')");
+		#endif
 //		if(!PyArg_ParseTuple(contour,"iiOO",&csize,&color,&Xlist,&Ylist)){
 //			return NULL;
 //		}
@@ -96,6 +116,9 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			//put the point into the array.
 			xpoints[j] = PyFloat_AsDouble(xpoint);
 			ypoints[j] = PyFloat_AsDouble(ypoint);
+			#ifdef DEBUG
+				PyRun_SimpleString("print('point loaded')");
+			#endif
 		}
 		//construct the image
 		if(color == 1){
