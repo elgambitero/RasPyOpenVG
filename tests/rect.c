@@ -7,13 +7,16 @@
 #include "fontinfo.h"
 #include "shapes.h"
 
+/*
 static PyObject *rect_initDisplay(PyObject *self, PyObject *args){
   init(&width, &height);
   Py_RETURN_NONE;
 }
-
+*/
 static PyObject *rect_rect(PyObject *self, PyObject *args){
-  Fill(255, 255, 255, 1);
+	int width,height;
+	init(&width,&height);
+ 	Fill(255, 255, 255, 1);
 	int i;
 	for(i=0;i<3;i++){
 		Start(width,height);
@@ -26,16 +29,17 @@ static PyObject *rect_rect(PyObject *self, PyObject *args){
 		End();
 		sleep(1);
 	}
+	finish();
   Py_RETURN_NONE;
 }
-
+/*
 static PyObject *rect_endDisplay(PyObject *self, PyObject *args){
   finish();
   Py_RETURN_NONE;
 }
-
+*/
 static PyMethodDef rect_methods[] = {
-  {"initDisplay", (PyCFunction)rect_initDisplay, METH_NOARGS, NULL},
+  //{"initDisplay", (PyCFunction)rect_initDisplay, METH_NOARGS, NULL},
   {"rect", (PyCFunction)rect_rect, METH_NOARGS, NULL},
-  {"endDisplay", (PyCFunction)rect_endDisplay, METH_NOARGS, NULL},
+  //{"endDisplay", (PyCFunction)rect_endDisplay, METH_NOARGS, NULL},
 }
