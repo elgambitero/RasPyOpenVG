@@ -24,55 +24,51 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 
 	PyObject *contours; //this holds all the contours in the layer.
 	int count; //this is the amount of contours.
-
-	//get the contours tuple from arguments.
+//get the contours tuple from arguments.
 	if (!PyArg_ParseTuple(args,"i0",&count,&contours)){
 		return NULL;
 	}
-
 	//now you have a tuple of contours.
 	//Let's draw them all
 	int i;//iterating variable
 	for (i=0;i<=count;i++){
-			PyObject *contour;
-			//Get the proper contour
-			contour = PyTuple_GetItem(contours,i);
-			int color; //holds the color of the contour
-			long csize; //holds the number of points
-			PyObject *Xlist; //holds the x coordinates of the points
-			PyObject *Ylist; //holds the y coordinates of the points
-			double *xpoints; //C array that holds the x coordinates
-			double *ypoints; //C array that holds the y coordinates
+		PyObject *contour;
+//Get the proper contour
+		contour = PyTuple_GetItem(contours,i);
+		int color; //holds the color of the contour
+		long csize; //holds the number of points
+		PyObject *Xlist; //holds the x coordinates of the points
+		PyObject *Ylist; //holds the y coordinates of the points
+		double *xpoints; //C array that holds the x coordinates
+		double *ypoints; //C array that holds the y coordinates
 
-			//Extract size, color and coordinates of the contour.
-			if(!PyArg_ParseTuple(contour,"ii00",&csize,&color,&Xlist,&Ylist)){
+		//Extract size, color and coordinates of the contour.
+		if(!PyArg_ParseTuple(contour,"ii00",&csize,&color,&Xlist,&Ylist)){
+			return NULL;
+		}
+
+		//Turn the tuples into c arrays
+		xpoints = (double *) malloc(sizeof(double)*csize);
+		ypoints = (double *) malloc(sizeof(double)*csize);
+
+		long j;//iterating variable
+		for(j = 0;j<csize;j++){
+			PyObject *xpoint;
+			PyObject *ypoint;
+			xpoint = PyList_GetItem(Xlist,j);
+			ypoint = PyList_GetItem(Ylist,j);
+			if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
+				free(xpoints);
+				free(ypoints);
+				PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
 				return NULL;
-			}
-
-			//Turn the tuples into c arrays
-			xpoints = (double *) malloc(sizeof(double)*csize);
-			ypoints = (double *) malloc(sizeof(double)*csize);
-
-			long j;//iterating variable
-			for(j = 0;j<csize;j++){
-				PyObject *xpoint;
-				PyObject *ypoint;
-				xpoint = PyList_GetItem(Xlist,j);
-				ypoint = PyList_GetItem(Ylist,j);
-				if (!PyFloat_Check(xpoint) || !PyFloat_Check(ypoint)) {
-         		free(xpoints);
-         		free(ypoints);
-         		PyErr_SetString(PyExc_TypeError, "expected sequence of integers");
-         	 return NULL;
-      	}
 			}
 			//put the point into the array.
 			xpoints[j] = PyFloat_AsDouble(xpoint);
 			ypoints[j] = PyFloat_AsDouble(ypoint);
 		}
-
 		//construct the image
- 		if(color == 1){
+		if(color == 1){
 			Fill(255,255,255,1);
 		}
 		else{
@@ -84,7 +80,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		free(xpoints);
 		free(ypoints);
 	}
-	//All contours loaded
+//All contours loaded
 
 	End(); //End composing the image and show.
 	Py_RETURN_NONE;
