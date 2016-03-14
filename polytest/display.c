@@ -61,7 +61,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		csize = PyInt_AsLong(PyTuple_GetItem(contour,0));
 		#ifdef DEBUG
 			if(csize == 4){
-				PyRun_SimpleString("print('csize is correct')");
+				printf("csize is %ld",csize);
 			}
 		#endif
 		color = PyInt_AsLong(PyTuple_GetItem(contour,1));
@@ -127,7 +127,37 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		else{
 			Fill(0,0,0,1);
 		}
-		Polygon((float*)xpoints,(float*)ypoints,csize);
+
+		#ifdef DEBUG
+			if(xpoints[0] == 400.0){
+				PyRun_SimpleString("print('xpoints is loading well')");
+			}
+
+			int a;
+			for(a=0;a<sizeof(xpoints);a++){
+				printf("%f\r\n",xpoints[a]);
+			}
+		#endif
+
+		//turn them into floats, because that's what polygon needs
+		float x[sizeof(xpoints)];
+		float y[sizeof(ypoints)];
+
+
+		//this could be done in a more elegant way...
+		int b;
+		for(b=0;b<sizeof(xpoints);b++){
+			x[b]=(float)xpoints[b];
+			y[b]=(float)ypoints[b];
+		}
+
+		#ifdef DEBUG
+			int e;
+			for(e=0;e<4;e++){
+				printf("%f\r\n",x[e]);
+			}
+		#endif
+		Polygon(x,y,csize);
 
 		//dispose the memory for xpoints and ypoints maybe??
 		free(xpoints);
