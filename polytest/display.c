@@ -28,6 +28,14 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
     }
     long count; //this is the amount of contours.
     count = PyTuple_Size(layer);
+    #ifdef DEBUG
+        printf("Layer has %lu contours\r\n",count);
+    #endif
+
+    if( PyLong_Check( PyTuple_GetItem(layer,0) ) ){
+         count = 1;
+    }
+
     //now you have a tuple of contours.
     //Let's draw them all
     int i;//iterating variable
@@ -44,8 +52,16 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
         #ifdef DEBUG
             PyRun_SimpleString("print('contour loaded')");
         #endif
+
+	Xlist=PyTuple_GetItem(contour,1);
+	Ylist=PyTuple_GetItem(contour,2);
+
+	#ifdef DEBUG
+		PyRun_SimpleString("print('contour lists loaded')");
+	#endif
+
         //Extract size, color and coordinates of the contour.
-        csize = PyList_Size(PyTuple_GetItem(contour,1));
+        csize = PyList_Size(Xlist);
 
         #ifdef DEBUG
             if(csize == 4){
@@ -64,16 +80,6 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
                 }
             }
         #endif
-
-        Xlist = PyTuple_GetItem(contour,1);
-        Ylist = PyTuple_GetItem(contour,2);
-
-        #ifdef DEBUG
-            PyRun_SimpleString("print('contour lists loaded')");
-        #endif
-//		if(!PyArg_ParseTuple(contour,"iiOO",&csize,&color,&Xlist,&Ylist)){
-//			return NULL;
-//		}
 
         //Turn the tuples into c arrays
         xpoints = (double *) malloc(sizeof(double)*csize);
