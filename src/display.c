@@ -7,7 +7,7 @@
 #include "fontinfo.h"
 #include "shapes.h"
 
-#define DEBUG
+
 
 static int width, height;
 
@@ -32,8 +32,11 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
         printf("Layer has %lu contours\r\n",count);
     #endif
 
-    if( PyLong_Check( PyTuple_GetItem(layer,0) ) ){
+    if( PyInt_Check( PyTuple_GetItem(layer,0) ) ){
          count = 1;
+         #ifdef DEBUG
+             printf("Single contour. Count is now %lu",count);
+         #endif
     }
 
     //now you have a tuple of contours.

@@ -18,7 +18,7 @@ d.init()
 for i in range(0,3):
     d.blank()
     time.sleep(1)
-    d.expose(layer)
+    d.expose(layer3)
     time.sleep(2)
     d.blank()
     time.sleep(1)
