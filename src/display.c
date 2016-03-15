@@ -42,7 +42,11 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
     for (i=0;i<count;i++){
         PyObject *contour;
 //Get the proper contour
-        contour = PyTuple_GetItem(layer,i);
+        if(count==1){
+            contour=layer;
+        }else{
+            contour = PyTuple_GetItem(layer,i);
+        }
         long color; //holds the color of the contour
         long csize; //holds the number of points
         PyObject *Xlist; //holds the x coordinates of the points
@@ -53,12 +57,12 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
             PyRun_SimpleString("print('contour loaded')");
         #endif
 
-	Xlist=PyTuple_GetItem(contour,1);
-	Ylist=PyTuple_GetItem(contour,2);
+    Xlist=PyTuple_GetItem(contour,1);
+    Ylist=PyTuple_GetItem(contour,2);
 
-	#ifdef DEBUG
-		PyRun_SimpleString("print('contour lists loaded')");
-	#endif
+    #ifdef DEBUG
+        PyRun_SimpleString("print('contour lists loaded')");
+    #endif
 
         //Extract size, color and coordinates of the contour.
         csize = PyList_Size(Xlist);
