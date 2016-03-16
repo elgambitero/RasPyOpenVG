@@ -7,7 +7,7 @@
 #include "fontinfo.h"
 #include "shapes.h"
 
-
+#define DEBUG
 
 static int width, height; 
 
