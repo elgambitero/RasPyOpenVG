@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import display as d
 import time
 
-tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/test.svg')
+tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/sapphotest.svg')
 root = tree.getroot()
 model=()
 
@@ -37,14 +37,13 @@ for layer in root:
         contuple = contuple + (Ylist,)
 
         laytuple = laytuple + (contuple,)
-
     model = model + (laytuple,)
 
 d.init()
 
 for layer in model:
     time.sleep(0.5)
-    print(layer)
+    print(len(layer[0]))
     d.expose(layer)
     time.sleep(0.5)
     d.blank()
