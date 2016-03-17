@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import display as d
 import time
 
-tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/sapphotest.svg')
+tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/python-fu-badge.svg')
 root = tree.getroot()
 model=()
 
@@ -19,7 +19,7 @@ for layer in root:
 
     for contour in layer:
         contuple=()
-        print(contour.attrib['{http://slic3r.org/namespaces/slic3r}type'])
+#        print(contour.attrib['{http://slic3r.org/namespaces/slic3r}type'])
         if contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'contour':
             contuple=contuple+(1,)
         elif contour.attrib['{http://slic3r.org/namespaces/slic3r}type'] == 'hole':
@@ -35,7 +35,7 @@ for layer in root:
 
         contuple = contuple + (Xlist,)
         contuple = contuple + (Ylist,)
-
+        print(len(Xlist))
         laytuple = laytuple + (contuple,)
     model = model + (laytuple,)
 
