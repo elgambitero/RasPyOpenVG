@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import display as d
 import time
 
-tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/python-fu-badge.svg')
+tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/sapphotest.svg')
 root = tree.getroot()
 model=()
 
@@ -32,9 +32,13 @@ for layer in root:
         for coordinate in coordinates:
             Xlist.append(float(coordinate.split(',')[0]))
             Ylist.append(float(coordinate.split(',')[1]))
+	
+	#HARDCODE a resize for 40 micron pixels
+        XlistCorr=[640+25*x for x in Xlist]
+	YlistCorr=[400+25*x for x in Ylist]
 
-        contuple = contuple + (Xlist,)
-        contuple = contuple + (Ylist,)
+        contuple = contuple + (XlistCorr,)
+        contuple = contuple + (YlistCorr,)
         print(len(Xlist))
         laytuple = laytuple + (contuple,)
     model = model + (laytuple,)
@@ -42,10 +46,7 @@ for layer in root:
 d.init()
 
 for layer in model:
-    time.sleep(0.5)
     print(len(layer[0]))
     d.expose(layer)
-    time.sleep(0.5)
-    d.blank()
 
 d.finish()
