@@ -71,9 +71,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		csize = PyList_Size(Xlist);
 
 		#ifdef DEBUG
-			if(csize == 4){
-				printf("csize is %ld\r\n",csize);
-			}
+			printf("csize is %ld\r\n",csize);
 		#endif
 
 		color = PyInt_AsLong(PyTuple_GetItem(contour,0));//get the color
@@ -121,7 +119,7 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			xpoints[j] = PyFloat_AsDouble(xpoint);
 			ypoints[j] = PyFloat_AsDouble(ypoint);
 			#ifdef DEBUG
-				PyRun_SimpleString("print('point loaded')");
+				printf("Point Loaded\r\n");
 			#endif
 		}
 		//construct the image
@@ -133,24 +131,20 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 		}
 
 		#ifdef DEBUG
-			if(xpoints[0] == 400.0){
-				PyRun_SimpleString("print('xpoints is loading well')");
-			}
-
 			int a;
-			for(a=0;a<sizeof(xpoints);a++){
-				printf("%f\r\n",xpoints[a]);
+			for(a=0;a<csize;a++){
+				printf("%d of %d: %f\r\n",a,sizeof(xpoints),xpoints[a]);
 			}
 		#endif
 
 		//turn them into floats, because that's what polygon needs
-		float x[sizeof(xpoints)];
-		float y[sizeof(ypoints)];
+		float x[csize];
+		float y[csize];
 
 
 		//this could be done in a more elegant way...
 		int b;
-		for(b=0;b<sizeof(xpoints);b++){
+		for(b=0;b<csize;b++){
 			x[b]=(float)xpoints[b];
 			y[b]=(float)ypoints[b];
 		}
@@ -162,7 +156,9 @@ static PyObject *display_expose(PyObject *self, PyObject *args){
 			}
 		#endif
 		Polygon(x,y,csize);
-		printf("first x coordinate is %f",x[0]);
+		#ifdef DEBUG
+			printf("first x coordinate is %f\r\n",x[0]);
+		#endif
 		//dispose the memory for xpoints and ypoints maybe??
 		free(xpoints);
 		free(ypoints);
