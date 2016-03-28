@@ -13,6 +13,8 @@ import time
 tree = ET.parse('/home/pi/Documents/RasPyOpenVG/tests/sapphotest.svg')
 root = tree.getroot()
 model=()
+size=(float(root.attrib['width']),float(root.attrib['height']))
+
 
 for layer in root:
     laytuple=()
@@ -32,10 +34,10 @@ for layer in root:
         for coordinate in coordinates:
             Xlist.append(float(coordinate.split(',')[0]))
             Ylist.append(float(coordinate.split(',')[1]))
-	
+
 	#HARDCODE a resize for 40 micron pixels
-        XlistCorr=[640+25*x for x in Xlist]
-	YlistCorr=[400+25*x for x in Ylist]
+        XlistCorr=[640+25*(x-size[0]/2) for x in Xlist]
+        YlistCorr=[400+25*(x-size[1]/2) for x in Ylist]
 
         contuple = contuple + (XlistCorr,)
         contuple = contuple + (YlistCorr,)
